@@ -10,6 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",
+    "@types/node": "^13.13.2",
     "serverless-offline": "^6.1.4",
     "serverless-webpack": "^5.3.1",
     "ts-loader": "^7.0.1",

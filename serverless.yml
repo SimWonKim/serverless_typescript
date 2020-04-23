@@ -1,31 +1,42 @@
 service: overwatch_league_api_serverless
 
 provider:
-  name: aws
-  runtime: nodejs12.x
-  region: ap-northeast-2
-  stage: dev
+    name: aws
+    runtime: nodejs12.x
+    region: ap-northeast-2
+    stage: dev
+    environment:
+        END_POINT: https://api.overwatchleague.com
 
 plugins:
-  - serverless-webpack
-  - serverless-offline
+    - serverless-webpack
+    - serverless-offline
 
 custom:
-  webpack:
-    webpackConfig: "webpack.config.js"
-    includeModules: false
-    packager: "npm"
-    excludeFiles: src/**/*.test.js
-  serverless-offline:
-    httpPort: 4000
+    webpack:
+        webpackConfig: "webpack.config.js"
+        includeModules: false
+        packager: "npm"
+        excludeFiles: src/**/*.test.js
+    serverless-offline:
+        httpPort: 4000
 
 package:
-  individually: true
+    individually: true
 
 functions:
-  hello:
-    handler: src/server.hello
-    events:
-      - http:
-          path: hello
-          method: get
+    hello:
+        handler: src/server.hello
+        events:
+            - http:
+                  path: hello
+                  method: get
+                  cors: true
+
+    getAllLeaugers:
+        handler: src/server.getAllLeaguers
+        events:
+            - http:
+                  path: leaguers
+                  method: get
+                  cors: true
