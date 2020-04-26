@@ -7,6 +7,14 @@ interface Response {
     body: String;
 }
 
+interface Leaguer {
+    id: Number;
+    name: String;
+    photo: String;
+    teamName: String;
+    mainHeroes?: Array<String>;
+}
+
 const createResponse = (statusCode: Number, body: Object) => {
     return {
         header: {
@@ -27,7 +35,20 @@ const getAllLeaguers = async (event: any) => {
     try {
         const url = `${process.env.END_POINT}/players?locale=ko-kr`;
         const request = await axios.get(url);
-        const leaguers: Array<Object> = request.data.content;
+
+        const leaguers: Array<Object> = request.data.content.map(
+            (item: any, index: Number) => {
+                const leaguer: Leaguer = {
+                    id: Number(item.id),
+                    name: item.name,
+                    photo: item.headshot,
+                    teamName: item.teams[0].team.name,
+                    mainHeroes: item.attributes.heroes,
+                };
+
+                return leaguer;
+            }
+        );
 
         const response: Response = createResponse(200, { leaguers });
         return response;
