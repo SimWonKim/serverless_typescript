@@ -31,8 +31,13 @@ const hello: Handler = async (event: any, context: Context) => {
     return response;
 };
 
-const getAllLeaguers = async (event: any) => {
+const getAllLeaguers: Handler = async (event: any) => {
     try {
+        const size: number = Number(event.queryStringParameters.size);
+        const page: number = Number(event.queryStringParameters.page);
+
+        const start: number = Number(page - 1) * size;
+
         const url = `${process.env.END_POINT}/players?locale=ko-kr`;
         const request = await axios.get(url);
 
@@ -50,7 +55,10 @@ const getAllLeaguers = async (event: any) => {
             }
         );
 
-        const response: Response = createResponse(200, { leaguers });
+        const response: Response = createResponse(200, {
+            leaguers: leaguers.slice(start, start + size),
+            counts: leaguers.length,
+        });
         return response;
     } catch (err) {
         console.log(err);
