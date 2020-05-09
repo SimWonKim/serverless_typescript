@@ -1,12 +1,12 @@
 import { Handler, Context } from "aws-lambda";
 import axios from "axios";
+import * as _ from "lodash";
 
 interface Response {
     header: Object;
     statusCode: Number;
     body: String;
 }
-
 interface Leaguer {
     id: Number;
     name: String;
@@ -55,10 +55,13 @@ const getAllLeaguers: Handler = async (event: any) => {
             }
         );
 
+        const sortLeaguers = _.sortBy(leaguers, 'name');
+
         const response: Response = createResponse(200, {
-            leaguers: leaguers.slice(start, start + size),
-            counts: leaguers.length,
+            leaguers: sortLeaguers.slice(start, start + size),
+            counts: sortLeaguers.length,
         });
+
         return response;
     } catch (err) {
         console.log(err);

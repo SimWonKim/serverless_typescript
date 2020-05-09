@@ -10,6 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",
+    "@types/lodash": "^4.14.150",
     "@types/node": "^13.13.2",
     "serverless-offline": "^6.1.4",
     "serverless-webpack": "^5.3.1",
@@ -18,6 +19,7 @@
     "webpack": "^4.43.0"
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "lodash": "^4.17.15"
   }
 }
