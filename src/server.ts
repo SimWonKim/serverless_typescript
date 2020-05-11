@@ -1,5 +1,5 @@
 import { Handler, Context } from "aws-lambda";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import * as _ from "lodash";
 
 interface Response {
@@ -7,6 +7,7 @@ interface Response {
     statusCode: Number;
     body: String;
 }
+
 interface Leaguer {
     id: Number;
     name: String;
@@ -38,8 +39,8 @@ const getAllLeaguers: Handler = async (event: any) => {
 
         const start: number = Number(page - 1) * size;
 
-        const url = `${process.env.END_POINT}/players?locale=ko-kr`;
-        const request = await axios.get(url);
+        const url: string = `${process.env.END_POINT}/players?locale=ko-kr`;
+        const request: AxiosResponse = await axios.get(url);
 
         const leaguers: Array<Object> = request.data.content.map(
             (item: any, index: Number) => {
@@ -55,7 +56,7 @@ const getAllLeaguers: Handler = async (event: any) => {
             }
         );
 
-        const sortLeaguers = _.sortBy(leaguers, 'name');
+        const sortLeaguers = _.sortBy(leaguers, "name");
 
         const response: Response = createResponse(200, {
             leaguers: sortLeaguers.slice(start, start + size),
@@ -73,4 +74,27 @@ const getAllLeaguers: Handler = async (event: any) => {
     }
 };
 
-export { hello, getAllLeaguers };
+const getLeaguerById: Handler = async (event: any) => {
+    try {
+        const id: number = event.pathParameters.id;
+
+        const url: string = `${process.env.END_POINT}/players/${id}?locale=ko-kr`;
+        const request: AxiosResponse = await axios.get(url);
+        const leaguer: Object = request.data.data;
+
+        const response: Response = createResponse(200, {
+            leaguer,
+        });
+
+        return response;
+    } catch (err) {
+        console.log(err);
+
+        const errObj = { message: err.message };
+
+        const response: Response = createResponse(500, errObj);
+        return response;
+    }
+};
+
+export { hello, getAllLeaguers, getLeaguerById };

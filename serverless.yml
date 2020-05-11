@@ -40,3 +40,11 @@ functions:
                   path: leaguers
                   method: get
                   cors: true
+
+    getLeaguerById:
+        handler: src/server.getLeaguerById
+        events:
+            - http:
+                  path: leaguers/{id}
+                  method: get
+                  cors: true
