@@ -1,9 +1,12 @@
-import { Handler, Context } from 'aws-lambda';
+import { Handler } from 'aws-lambda';
 import axios, { AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 
 interface Response {
-    header: Object;
+    header: {
+        'Access-Control-Allow-Origin': string;
+        'Access-Control-Allow-Credentials': boolean;
+    };
     statusCode: number;
     body: string;
 }
@@ -29,21 +32,23 @@ interface leaguerDetail {
     givenName: string;
 }
 
-const createResponse = (statusCode: number, body: Object) => {
-    return {
+const createResponse = (statusCode: number, body: string) => {
+    const response: Response = {
         header: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Credentials': true,
         },
         statusCode,
-        body: JSON.stringify(body),
+        body,
     };
-};
 
-const hello: Handler = async (event: any, context: Context) => {
-    const response: Response = createResponse(200, { message: 'hello' });
     return response;
 };
+
+// const hello: Handler = async (event: any, context: Context) => {
+//     const response: Response = createResponse(200, { message: 'hello' });
+//     return response;
+// };
 
 const getAllLeaguers: Handler = async (event: any) => {
     try {
@@ -55,6 +60,7 @@ const getAllLeaguers: Handler = async (event: any) => {
         const url = `${process.env.END_POINT}/players?locale=ko-kr`;
         const request: AxiosResponse = await axios.get(url);
 
+        // eslint-disable-next-line @typescript-eslint/ban-types
         const leaguers: Array<Object> = request.data.content.map((item: any, index: number) => {
             const leaguer: Leaguer = {
                 id: Number(item.id),
@@ -69,10 +75,13 @@ const getAllLeaguers: Handler = async (event: any) => {
 
         const sortLeaguers = _.sortBy(leaguers, 'name');
 
-        const response: Response = createResponse(200, {
-            leaguers: sortLeaguers.slice(start, start + size),
-            counts: sortLeaguers.length,
-        });
+        const response: Response = createResponse(
+            200,
+            JSON.stringify({
+                leaguers: sortLeaguers.slice(start, start + size),
+                counts: sortLeaguers.length,
+            }),
+        );
 
         return response;
     } catch (err) {
@@ -80,7 +89,7 @@ const getAllLeaguers: Handler = async (event: any) => {
 
         const errObj = { message: err.message };
 
-        const response: Response = createResponse(500, errObj);
+        const response: Response = createResponse(500, JSON.stringify(errObj));
         return response;
     }
 };
@@ -118,9 +127,12 @@ const getLeaguerById: Handler = async (event: any) => {
             givenName: leaguerDetailResponse.givenName,
         };
 
-        const response: Response = createResponse(200, {
-            leaguer: leaguerDetail,
-        });
+        const response: Response = createResponse(
+            200,
+            JSON.stringify({
+                leaguer: leaguerDetail,
+            }),
+        );
 
         return response;
     } catch (err) {
@@ -128,9 +140,9 @@ const getLeaguerById: Handler = async (event: any) => {
 
         const errObj = { message: err.message };
 
-        const response: Response = createResponse(500, errObj);
+        const response: Response = createResponse(500, JSON.stringify(errObj));
         return response;
     }
 };
 
-export { hello, getAllLeaguers, getLeaguerById };
+export { getAllLeaguers, getLeaguerById };
