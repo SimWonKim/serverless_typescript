@@ -1,39 +1,39 @@
-import { Handler, Context } from "aws-lambda";
-import axios, { AxiosResponse } from "axios";
-import * as _ from "lodash";
+import { Handler, Context } from 'aws-lambda';
+import axios, { AxiosResponse } from 'axios';
+import * as _ from 'lodash';
 
 interface Response {
     header: Object;
-    statusCode: Number;
-    body: String;
+    statusCode: number;
+    body: string;
 }
 
 interface Leaguer {
-    id: Number;
-    name: String;
-    photo: String;
-    teamName: String;
-    mainHeroes?: Array<String>;
+    id: number;
+    name: string;
+    photo: string;
+    teamName: string;
+    mainHeroes?: Array<string>;
 }
 
 interface Team {
-    id: Number;
-    name: String;
-    logo: String;
+    id: number;
+    name: string;
+    logo: string;
 }
 
 interface leaguerDetail {
     leaguer: Leaguer;
     team: Team;
-    familyName: String;
-    givenName: String;
+    familyName: string;
+    givenName: string;
 }
 
-const createResponse = (statusCode: Number, body: Object) => {
+const createResponse = (statusCode: number, body: Object) => {
     return {
         header: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": true,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
         },
         statusCode,
         body: JSON.stringify(body),
@@ -41,35 +41,33 @@ const createResponse = (statusCode: Number, body: Object) => {
 };
 
 const hello: Handler = async (event: any, context: Context) => {
-    const response: Response = createResponse(200, { message: "hello" });
+    const response: Response = createResponse(200, { message: 'hello' });
     return response;
 };
 
 const getAllLeaguers: Handler = async (event: any) => {
     try {
-        const size: number = Number(event.queryStringParameters.size);
-        const page: number = Number(event.queryStringParameters.page);
+        const size = Number(event.queryStringParameters.size);
+        const page = Number(event.queryStringParameters.page);
 
         const start: number = Number(page - 1) * size;
 
-        const url: string = `${process.env.END_POINT}/players?locale=ko-kr`;
+        const url = `${process.env.END_POINT}/players?locale=ko-kr`;
         const request: AxiosResponse = await axios.get(url);
 
-        const leaguers: Array<Object> = request.data.content.map(
-            (item: any, index: Number) => {
-                const leaguer: Leaguer = {
-                    id: Number(item.id),
-                    name: item.name,
-                    photo: item.headshot,
-                    teamName: item.teams[0].team.name,
-                    mainHeroes: item.attributes.heroes,
-                };
+        const leaguers: Array<Object> = request.data.content.map((item: any, index: number) => {
+            const leaguer: Leaguer = {
+                id: Number(item.id),
+                name: item.name,
+                photo: item.headshot,
+                teamName: item.teams[0].team.name,
+                mainHeroes: item.attributes.heroes,
+            };
 
-                return leaguer;
-            }
-        );
+            return leaguer;
+        });
 
-        const sortLeaguers = _.sortBy(leaguers, "name");
+        const sortLeaguers = _.sortBy(leaguers, 'name');
 
         const response: Response = createResponse(200, {
             leaguers: sortLeaguers.slice(start, start + size),
@@ -91,11 +89,13 @@ const getLeaguerById: Handler = async (event: any) => {
     try {
         const id: number = event.pathParameters.id;
 
-        const url: string = `${process.env.END_POINT}/players/${id}?locale=ko-kr`;
+        const expandDatas: Array<string> = ['stats', 'stat.ranks'];
+
+        const url = `${process.env.END_POINT}/players/${id}?locale=ko-kr&expand=${expandDatas.join(',')}`;
         const request: AxiosResponse = await axios.get(url);
         const leaguerDetailResponse: any = request.data.data.player;
 
-        // console.log(leaguerDetailResponse);
+        console.log(leaguerDetailResponse);
 
         const leaguer: Leaguer = {
             id: Number(leaguerDetailResponse.id),
