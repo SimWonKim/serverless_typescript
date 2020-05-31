@@ -13,9 +13,9 @@ plugins:
 
 custom:
     webpack:
-        webpackConfig: "webpack.config.js"
+        webpackConfig: 'webpack.config.js'
         includeModules: false
-        packager: "npm"
+        packager: 'npm'
         excludeFiles: src/**/*.test.js
     serverless-offline:
         httpPort: 4000
@@ -23,9 +23,15 @@ custom:
 # package:
 #     individually: true
 
+# This will switch the plugin to per function packaging
+# which makes use of the multi-compiler feature of Webpack.
+# That means, that Webpack compiles and optimizes each function individually,
+# removing unnecessary imports and reducing code sizes significantly.
+# Tree-Shaking only makes sense with this approach.
+
 functions:
     hello:
-        handler: src/server.hello
+        handler: dist/service/src/server.hello
         events:
             - http:
                   path: hello
@@ -33,7 +39,8 @@ functions:
                   cors: true
 
     getAllLeaugers:
-        handler: src/server.getAllLeaguers
+        # handler: src/server.getAllLeaguers
+        handler: dist/service/src/server.getAllLeaguers
         events:
             - http:
                   path: leaguers
@@ -41,7 +48,7 @@ functions:
                   cors: true
 
     getLeaguerById:
-        handler: src/server.getLeaguerById
+        handler: dist/service/src/server.getLeaguerById
         events:
             - http:
                   path: leaguers/{id}
