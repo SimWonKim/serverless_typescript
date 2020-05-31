@@ -1,5 +1,4 @@
-service: overwatch_league_api_serverless
-
+service: overwatch-leauge-api-server
 provider:
     name: aws
     runtime: nodejs12.x
@@ -14,15 +13,21 @@ plugins:
 
 custom:
     webpack:
-        webpackConfig: "webpack.config.js"
+        webpackConfig: 'webpack.config.js'
         includeModules: false
-        packager: "npm"
+        packager: 'npm'
         excludeFiles: src/**/*.test.js
     serverless-offline:
         httpPort: 4000
 
-package:
-    individually: true
+# package:
+#     individually: true
+
+# This will switch the plugin to per function packaging
+# which makes use of the multi-compiler feature of Webpack.
+# That means, that Webpack compiles and optimizes each function individually,
+# removing unnecessary imports and reducing code sizes significantly.
+# Tree-Shaking only makes sense with this approach.
 
 functions:
     hello:

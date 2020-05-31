@@ -1,9 +1,9 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
-    "sourceMap": true,
-    "strict": true
-  },
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "sourceMap": true,
+        "strict": true
+    },
+    "exclude": ["node_modules", "webpack.config.js"]
 }
