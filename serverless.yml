@@ -31,7 +31,7 @@ custom:
 
 functions:
     hello:
-        handler: dist/service/src/server.hello
+        handler: src/server.hello
         events:
             - http:
                   path: hello
@@ -39,8 +39,7 @@ functions:
                   cors: true
 
     getAllLeaugers:
-        # handler: src/server.getAllLeaguers
-        handler: dist/service/src/server.getAllLeaguers
+        handler: src/server.getAllLeaguers
         events:
             - http:
                   path: leaguers
@@ -48,7 +47,7 @@ functions:
                   cors: true
 
     getLeaguerById:
-        handler: dist/service/src/server.getLeaguerById
+        handler: src/server.getLeaguerById
         events:
             - http:
                   path: leaguers/{id}

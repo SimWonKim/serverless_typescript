@@ -3,12 +3,13 @@ import axios, { AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 
 interface Response {
-    header: {
+    headers: {
         'Access-Control-Allow-Origin': string;
         'Access-Control-Allow-Credentials': boolean;
     };
     statusCode: number;
     body: string;
+    isBase64Encoded: boolean;
 }
 
 interface Leaguer {
@@ -34,12 +35,13 @@ interface leaguerDetail {
 
 const createResponse = (statusCode: number, body: string) => {
     const response: Response = {
-        header: {
+        headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Credentials': true,
         },
         statusCode,
         body,
+        isBase64Encoded: false,
     };
 
     return response;
