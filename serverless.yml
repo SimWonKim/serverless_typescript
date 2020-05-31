@@ -1,5 +1,4 @@
-service: overwatch_league_api_serverless
-
+service: overwatch-leauge-api-server
 provider:
     name: aws
     runtime: nodejs12.x
@@ -21,8 +20,8 @@ custom:
     serverless-offline:
         httpPort: 4000
 
-package:
-    individually: true
+# package:
+#     individually: true
 
 functions:
     hello:
