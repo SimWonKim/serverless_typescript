@@ -101,36 +101,43 @@ const getLeaguerById: Handler = async (event: any) => {
         const expandDatas: Array<string> = ['stats', 'stat.ranks'];
 
         const url = `${process.env.END_POINT}/players/${id}?locale=ko-kr&expand=${expandDatas.join(',')}`;
-        const request: AxiosResponse = await axios.get(url);
-        const leaguerDetailResponse: any = request.data.data.player;
 
-        console.log(leaguerDetailResponse);
+        console.log(url);
+
+        const request: AxiosResponse = await axios.get(url);
+        const leaguerDetailResponse: any = request.data.data;
+
+        const playerResponse: any = leaguerDetailResponse.player;
+        const statsValueResponse: any = leaguerDetailResponse.stats;
+        const statsRankResponse: any = leaguerDetailResponse.statRanks;
 
         const leaguer: Leaguer = {
-            id: Number(leaguerDetailResponse.id),
-            name: leaguerDetailResponse.name,
-            photo: leaguerDetailResponse.headshot,
-            teamName: leaguerDetailResponse.teams[0].team.name,
-            mainHeroes: leaguerDetailResponse.attributes.heroes,
+            id: Number(playerResponse.id),
+            name: playerResponse.name,
+            photo: playerResponse.headshot,
+            teamName: playerResponse.teams[0].team.name,
+            mainHeroes: playerResponse.attributes.heroes,
         };
 
         const team: Team = {
-            id: Number(leaguerDetailResponse.teams[0].team.id),
-            name: leaguerDetailResponse.teams[0].team.name,
-            logo: leaguerDetailResponse.teams[0].team.logo,
+            id: Number(playerResponse.teams[0].team.id),
+            name: playerResponse.teams[0].team.name,
+            logo: playerResponse.teams[0].team.logo,
         };
 
         const leaguerDetail: leaguerDetail = {
             leaguer: leaguer,
             team: team,
-            familyName: leaguerDetailResponse.familyName,
-            givenName: leaguerDetailResponse.givenName,
+            familyName: playerResponse.familyName,
+            givenName: playerResponse.givenName,
         };
 
         const response: Response = createResponse(
             200,
             JSON.stringify({
                 leaguer: leaguerDetail,
+                stats: statsValueResponse,
+                statRank: statsRankResponse,
             }),
         );
 
